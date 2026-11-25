@@ -11,58 +11,87 @@
 <style>
   :root{
     --crema:#F2ECDF; --beige:#EDE7DA; --tinta:#1E1E1E; --noche:#30364F; --ladrillo:#952A24;
-    --gris:#ACBAC4; --lila:#98869C; --vino:#8E242A; --azul:#4E5B81; --amarillo:#EDD87C;
+    --gris:#ACBAC4; --lila:#98869C; --lila-osc:#76657A; --vino:#8E242A; --azul:#4E5B81; --amarillo:#EDD87C;
     --bg:var(--crema);
     --titulo:'Lora', Georgia, serif;
     --texto:'Arial Rounded MT Bold','Arial Rounded MT','Nunito',system-ui,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{min-height:100%}
-  body{background:var(--bg);color:var(--tinta);font-family:var(--texto);font-size:17px;line-height:1.55;transition:background-color .9s ease;-webkit-font-smoothing:antialiased}
+  body{background:var(--bg);color:var(--tinta);font-family:var(--texto);font-size:17px;line-height:1.58;transition:background-color .9s ease;-webkit-font-smoothing:antialiased}
   body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.45 0 0 0 0 0.4 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
   .app{max-width:720px;margin:0 auto;padding:28px 18px 60px;position:relative}
   header.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
-  .marca{font-family:var(--titulo);letter-spacing:.02em;text-transform:none;font-size:18px;font-weight:600}
+  header.top.oculto{display:none}
+  .marca-wrap{display:inline-flex;align-items:center;gap:8px}
+  .marca-wrap img{height:22px;width:auto;display:block}
   h1,h2,h3{font-family:var(--titulo);font-weight:600;line-height:1.15}
-  h1{font-size:clamp(34px,7vw,52px);margin:10px 0 18px}
+  h1{font-size:clamp(34px,7vw,50px);margin:10px 0 18px}
   h2{font-size:clamp(24px,5vw,32px);margin-bottom:18px}
   p{margin-bottom:14px}
+  p.justificado{text-align:justify;text-justify:inter-word}
   .pantalla{display:none;animation:entra .6s ease both}
   .pantalla.activa{display:block}
   @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
   /* camino */
-  .camino{position:relative;margin:6px 0 4px}
-  .camino svg{width:100%;height:auto;display:block;overflow:visible}
+  .camino{position:relative;margin:10px 0 4px}
+  .camino svg.mapa-svg{width:100%;height:auto;display:block;overflow:visible}
   .ruta-base{fill:none;stroke:rgba(30,30,30,.28);stroke-width:2.2;stroke-dasharray:2 7;stroke-linecap:round}
   .ruta-hecha{fill:none;stroke:var(--ladrillo);stroke-width:2.6;stroke-linecap:round;transition:stroke-dasharray 1.1s cubic-bezier(.5,0,.3,1)}
   .parada{fill:var(--crema);stroke:var(--tinta);stroke-width:1.6}
   .parada.ok{fill:var(--tinta)}
-  .meta{font-size:15px}
-  .guia{position:absolute;left:0;top:0;width:54px;height:54px;transform:translate(-50%,-88%);transition:left 1.1s cubic-bezier(.5,0,.3,1),top 1.1s cubic-bezier(.5,0,.3,1)}
-  .guia .cuerpo{animation:paso .55s ease-in-out infinite alternate;transform-origin:50% 100%}
+  .guia{position:absolute;left:0;top:0;width:62px;height:62px;transform:translate(-50%,-88%);transition:left 1.1s cubic-bezier(.5,0,.3,1),top 1.1s cubic-bezier(.5,0,.3,1)}
+  .guia .cuerpo{width:100%;height:100%;object-fit:contain;display:block;animation:patinar .65s ease-in-out infinite alternate;transform-origin:50% 90%}
   .guia.quieto .cuerpo{animation:none}
-  @keyframes paso{from{transform:rotate(-5deg) translateY(0)}to{transform:rotate(5deg) translateY(-3px)}}
-  .nube{position:relative;background:#fff;border:1.6px solid var(--tinta);border-radius:22px;padding:12px 16px;font-size:15px;line-height:1.4;margin:14px 0 22px;max-width:520px;box-shadow:3px 3px 0 var(--tinta)}
-  .nube::before,.nube::after{content:"";position:absolute;background:#fff;border:1.6px solid var(--tinta);border-radius:50%}
-  .nube::before{width:14px;height:14px;left:calc(var(--cola,40px) - 7px);top:-20px;transition:left 1.1s}
-  .nube::after{width:8px;height:8px;left:calc(var(--cola,40px) - 10px);top:-32px;transition:left 1.1s}
+  @keyframes patinar{from{transform:rotate(-4deg) translateY(0)}to{transform:rotate(4deg) translateY(-2.5px)}}
+
+  /* nube de pensamiento */
+  .nube-wrap{position:relative;margin:18px 0 24px;max-width:540px}
+  .nube-burbujas{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding-left:calc(var(--cola,44px) - 8px);margin-bottom:4px;transition:padding-left 1.1s}
+  .nube-burbujas span{display:block;border-radius:50%;background:#FAF7F0;border:1.5px solid rgba(30,30,30,.45)}
+  .nube-burbujas .b1{width:8px;height:8px;margin-left:6px}
+  .nube-burbujas .b2{width:13px;height:13px;margin-left:1px}
+  .nube{
+    position:relative;
+    background:#FAF7F0;
+    border:1.5px solid rgba(30,30,30,.45);
+    border-radius:36px 28px 34px 26px / 26px 34px 28px 36px;
+    padding:14px 20px;
+    font-size:15px;line-height:1.42;
+    box-shadow:0 10px 24px -16px rgba(30,30,30,.35);
+  }
   .contador{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.7;margin-bottom:6px}
 
   /* preguntas */
   .pregunta{font-family:var(--titulo);font-size:clamp(24px,5vw,31px);font-weight:600;line-height:1.2;margin-bottom:22px}
   .opciones{display:grid;gap:12px}
-  .op{font:inherit;text-align:left;cursor:pointer;background:rgba(255,255,255,.72);border:1.6px solid var(--tinta);border-radius:16px;padding:16px 18px;min-height:56px;color:var(--tinta);transition:transform .15s,box-shadow .15s,background .2s}
-  .op:hover,.op:focus-visible{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--tinta);background:#fff;outline:none}
+  .op{
+    font:inherit;text-align:left;cursor:pointer;
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(30,30,30,.14);
+    border-radius:16px;padding:16px 18px;min-height:56px;color:var(--tinta);
+    box-shadow:0 6px 16px -12px rgba(30,30,30,.25);
+    transition:transform .15s,box-shadow .15s,background .2s;
+  }
+  .op:hover,.op:focus-visible{transform:translateY(-2px);box-shadow:0 10px 20px -12px rgba(30,30,30,.35);background:#fff;outline:none}
   .op.elegida{background:var(--noche);color:var(--crema);border-color:var(--noche)}
   .nav{display:flex;justify-content:space-between;margin-top:22px}
   .lnk{font:inherit;background:none;border:none;cursor:pointer;color:var(--tinta);text-decoration:underline;text-underline-offset:4px;font-size:15px;padding:8px 0}
-  .btn{display:inline-block;font:inherit;font-weight:700;cursor:pointer;background:var(--ladrillo);color:var(--crema);border:none;border-radius:999px;padding:16px 30px;min-height:52px;font-size:17px;text-decoration:none;box-shadow:3px 3px 0 var(--tinta);transition:transform .15s,box-shadow .15s}
-  .btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--tinta)}
-  .btn.sec{background:transparent;color:var(--tinta);border:1.6px solid var(--tinta);box-shadow:none}
-  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 26px;font-size:14px}
-  .chip{border:1.4px solid var(--tinta);border-radius:999px;padding:5px 12px;background:rgba(255,255,255,.5)}
+  .btn{
+    display:inline-block;font:inherit;font-weight:700;cursor:pointer;
+    background:var(--lila-osc);color:#fff;border:none;border-radius:999px;
+    padding:16px 32px;min-height:52px;font-size:17px;text-decoration:none;
+    box-shadow:0 10px 22px -10px rgba(60,40,70,.55);
+    transition:transform .15s,box-shadow .15s,background .15s;
+  }
+  .btn:hover{transform:translateY(-2px);background:#645368;box-shadow:0 14px 26px -10px rgba(60,40,70,.65)}
+  .btn.sec{background:transparent;color:var(--tinta);border:1.5px solid rgba(30,30,30,.3);box-shadow:none}
+  .btn.sec:hover{background:rgba(255,255,255,.45)}
+
+  .pie-logo{margin-top:44px;display:flex;justify-content:center}
+  .pie-logo img{width:132px;height:auto;opacity:.92}
 
   /* postal */
   .postal{background:var(--crema);border-radius:6px;box-shadow:0 18px 40px rgba(0,0,0,.25);padding:26px 22px 24px;position:relative;margin-top:8px;transform:rotate(-.6deg)}
@@ -101,38 +130,39 @@
 </head>
 <body>
 <div class="app">
-  <header class="top"><span class="marca">El Refugio 🏠</span><span id="etapa">El camino creativo</span></header>
+  <header class="top" id="barra-superior">
+    <span class="marca-wrap"><img src="img/Group%20327.png" alt="El Refugio"></span>
+    <span id="etapa">El camino creativo</span>
+  </header>
 
   <div class="camino" aria-hidden="true">
-    <svg id="mapa" viewBox="0 0 360 130">
+    <svg id="mapa" class="mapa-svg" viewBox="0 0 360 130">
       <path id="ruta" class="ruta-base" d="M14,104 C48,30 86,124 120,78 S150,18 186,44 S172,112 214,104 S262,30 292,58 S318,108 346,40"/>
       <path id="hecha" class="ruta-hecha" d=""/>
       <g id="paradas"></g>
-      <text class="meta" x="338" y="26">🏠</text>
+      <image href="img/Group%20327.png" x="318" y="18" width="44" height="18" preserveAspectRatio="xMidYMid meet"/>
     </svg>
-    <div class="guia" id="guia" title="Tu guía en el camino">
-      <!-- GUÍA PROVISIONAL: se reemplaza por el personaje de Ani (img/guia.png) -->
-      <svg class="cuerpo" viewBox="0 0 54 54" width="54" height="54">
-        <ellipse cx="27" cy="50" rx="13" ry="2.5" fill="rgba(0,0,0,.18)"/>
-        <path d="M13 26 L27 13 L41 26 V47 H13 Z" fill="#F2ECDF" stroke="#1E1E1E" stroke-width="2" stroke-linejoin="round"/>
-        <path d="M9 28 L27 10 L45 28" fill="none" stroke="#952A24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        <rect x="23" y="34" width="8" height="13" rx="1.5" fill="#952A24"/>
-        <circle cx="21" cy="27" r="1.8" fill="#1E1E1E"/><circle cx="33" cy="27" r="1.8" fill="#1E1E1E"/>
-        <path d="M23.5 30.5 Q27 33 30.5 30.5" fill="none" stroke="#1E1E1E" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
+    <div class="guia" id="guia" title="Patico patinetero en el camino creativo">
+      <img class="cuerpo" src="img/pato.png" alt="Patico patinetero">
     </div>
   </div>
-  <div class="nube" id="nube"></div>
+
+  <div class="nube-wrap" id="nube-wrap">
+    <div class="nube-burbujas" aria-hidden="true">
+      <span class="b1"></span>
+      <span class="b2"></span>
+    </div>
+    <div class="nube" id="nube"></div>
+  </div>
 
   <!-- BIENVENIDA -->
   <section class="pantalla activa" id="p-inicio">
     <div class="contador">El Test del Camino Creativo</div>
-    <h1>Bienvenido al camino creativo</h1>
-    <p>El camino creativo empieza el día que decides que la creatividad es una parte fundamental de tu vida y que quieres construir tu vida alrededor de ella.</p>
-    <p>Desde ese momento recorres un camino con muchas etapas: momentos en los que no sabes por dónde empezar, otros en los que el miedo te frena, otros en los que ya creas y quieres vivir de lo que haces. No es un camino recto: avanzas, te detienes y a veces vuelves a pasar por lugares que creías superados.</p>
-    <p>Este test te ayuda a descubrir en qué punto del camino estás hoy y qué clases y herramientas de El Refugio pueden acompañarte en lo que estás viviendo.</p>
-    <div class="chips"><span class="chip">7 preguntas</span><span class="chip">menos de 2 minutos</span><span class="chip">una postal al final</span></div>
-    <button class="btn" id="empezar">Empezar el camino</button>
+    <h1>¿En qué punto del Camino Creativo estás?</h1>
+    <p class="justificado">Crear implica atravesar etapas distintas: momentos de duda o bloqueo, otros en los que buscas orden o constancia y otros en los que quieres mostrar y vivir de tu proyecto. No es un camino lineal, sino un proceso vivo en el que avanzas y vuelves a distintas etapas según lo que estés viviendo.</p>
+    <p class="justificado"><b>¡Toma el test para saber por dónde empezar!</b></p>
+    <button class="btn" id="empezar">¡Empezar el camino!</button>
+    <div class="pie-logo"><img src="img/Group%20327.png" alt="El Refugio"></div>
   </section>
 
   <!-- PREGUNTA -->
@@ -141,6 +171,7 @@
     <div class="pregunta" id="enunciado"></div>
     <div class="opciones" id="opciones"></div>
     <div class="nav"><button class="lnk" id="atras">← Volver</button></div>
+    <div class="pie-logo"><img src="img/Group%20327.png" alt="El Refugio"></div>
   </section>
 
   <!-- RESULTADO -->
@@ -154,13 +185,10 @@
 
 <script>
 /* ===== CONFIGURACIÓN ===== */
-// URL de la aplicación web de Google Apps Script que guarda las respuestas en el Sheet.
-// Si está vacía, el test funciona igual pero no guarda nada.
 const REGISTRO_URL = "";
 const PATREON = "https://www.patreon.com/elrefugiocreativo/posts/";
 
 /* ===== PREGUNTAS ===== */
-// Cada opción suma 1 (la pregunta 7 suma 2.1) a uno o dos momentos.
 const PREGUNTAS = [
   {t:"¿En qué punto está tu proyecto?", o:[
     ["Tengo ganas, pero no sé por dónde empezar",["empezar"]],
@@ -215,7 +243,7 @@ const NUBES = [
 
 /* ===== COLORES ===== */
 const FONDOS = ["#F2ECDF","#F4EBC6","#DDE3E8","#E6DFE7","#DADEE8","#EBD9D6","#EFE6D3","#E9EDE3"];
-const CAT = { // color del sello y del fondo de la postal por momento
+const CAT = {
   bloqueo:"#EDD87C", miedo:"#ACBAC4", perfeccionismo:"#ACBAC4", crisis:"#ACBAC4",
   empezar:"#4E5B81", organizacion:"#4E5B81", constancia:"#4E5B81",
   mostrarme:"#8E242A", identidad:"#8E242A", comunidad:"#8E242A",
@@ -245,7 +273,7 @@ const RESULTADOS = {"bloqueo": {"nombre": "Bloqueo creativo", "titulo": "volver 
 /* ===== LÓGICA ===== */
 const $ = s => document.querySelector(s);
 const ruta = $('#ruta'), hecha = $('#hecha'), guia = $('#guia'), mapa = $('#mapa');
-const N = PREGUNTAS.length;            // 7 preguntas -> 9 puntos (inicio, 7, llegada)
+const N = PREGUNTAS.length;
 const L = ruta.getTotalLength();
 let paso = 0, respuestas = [];
 
@@ -259,16 +287,17 @@ function moverGuia(i){
   const k = box.width / vb.width;
   guia.classList.remove('quieto');
   guia.style.left = (p.x*k)+'px'; guia.style.top = (p.y*k)+'px';
-  const nube=$('#nube'); nube.style.setProperty('--cola', Math.min(Math.max(p.x*k,24), nube.offsetWidth-24)+'px');
+  const wrap = $('#nube-wrap');
+  wrap.style.setProperty('--cola', Math.min(Math.max(p.x*k,24), wrap.offsetWidth-36)+'px');
   clearTimeout(moverGuia.t); moverGuia.t = setTimeout(()=>guia.classList.add('quieto'),1150);
   document.querySelectorAll('.parada').forEach(c=>c.classList.toggle('ok', +c.dataset.i < i));
-  // tramo recorrido: línea continua hasta donde va la guía
   const len = L*i/(N+1);
   hecha.style.strokeDasharray = `${len} ${L+10}`;
 }
 
 function mostrar(id){
   document.querySelectorAll('.pantalla').forEach(s=>s.classList.toggle('activa', s.id===id));
+  $('#barra-superior').classList.toggle('oculto', id === 'p-pregunta');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function decir(t){ $('#nube').textContent = t; }
@@ -305,7 +334,6 @@ function inicio(){
 function calcular(){
   const pts = {}; Object.keys(RESULTADOS).forEach(k=>pts[k]=0);
   respuestas.forEach((j,i)=>{ const peso = PREGUNTAS[i].peso||1; PREGUNTAS[i].o[j][1].forEach(m=>pts[m]+=peso); });
-  // gana el más alto; los empates los decide la pregunta 7 (peso 2.1)
   let mejor = null; for(const k in pts){ if(mejor===null || pts[k]>pts[mejor]) mejor=k; }
   return {momento:mejor, pts};
 }
