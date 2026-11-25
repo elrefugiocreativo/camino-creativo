@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El Test del Camino Creativo · El Refugio</title>
+<meta name="description" content="Descubre en qué punto del camino creativo estás hoy y qué clases de El Refugio pueden acompañarte.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#F2ECDF; --beige:#EDE7DA; --tinta:#1E1E1E; --noche:#30364F; --ladrillo:#952A24;
+    --gris:#ACBAC4; --lila:#98869C; --vino:#8E242A; --azul:#4E5B81; --amarillo:#EDD87C;
+    --bg:var(--crema);
+    --titulo:'Lora', Georgia, serif;
+    --texto:'Arial Rounded MT Bold','Arial Rounded MT','Nunito',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{background:var(--bg);color:var(--tinta);font-family:var(--texto);font-size:17px;line-height:1.55;transition:background-color .9s ease;-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.45 0 0 0 0 0.4 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .app{max-width:720px;margin:0 auto;padding:28px 18px 60px;position:relative}
+  header.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+  .marca{font-family:var(--titulo);letter-spacing:.02em;text-transform:none;font-size:18px;font-weight:600}
+  h1,h2,h3{font-family:var(--titulo);font-weight:600;line-height:1.15}
+  h1{font-size:clamp(34px,7vw,52px);margin:10px 0 18px}
+  h2{font-size:clamp(24px,5vw,32px);margin-bottom:18px}
+  p{margin-bottom:14px}
+  .pantalla{display:none;animation:entra .6s ease both}
+  .pantalla.activa{display:block}
+  @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* camino */
+  .camino{position:relative;margin:6px 0 4px}
+  .camino svg{width:100%;height:auto;display:block;overflow:visible}
+  .ruta-base{fill:none;stroke:rgba(30,30,30,.28);stroke-width:2.2;stroke-dasharray:2 7;stroke-linecap:round}
+  .ruta-hecha{fill:none;stroke:var(--ladrillo);stroke-width:2.6;stroke-linecap:round;transition:stroke-dasharray 1.1s cubic-bezier(.5,0,.3,1)}
+  .parada{fill:var(--crema);stroke:var(--tinta);stroke-width:1.6}
+  .parada.ok{fill:var(--tinta)}
+  .meta{font-size:15px}
+  .guia{position:absolute;left:0;top:0;width:54px;height:54px;transform:translate(-50%,-88%);transition:left 1.1s cubic-bezier(.5,0,.3,1),top 1.1s cubic-bezier(.5,0,.3,1)}
+  .guia .cuerpo{animation:paso .55s ease-in-out infinite alternate;transform-origin:50% 100%}
+  .guia.quieto .cuerpo{animation:none}
+  @keyframes paso{from{transform:rotate(-5deg) translateY(0)}to{transform:rotate(5deg) translateY(-3px)}}
+  .nube{position:relative;background:#fff;border:1.6px solid var(--tinta);border-radius:22px;padding:12px 16px;font-size:15px;line-height:1.4;margin:14px 0 22px;max-width:520px;box-shadow:3px 3px 0 var(--tinta)}
+  .nube::before,.nube::after{content:"";position:absolute;background:#fff;border:1.6px solid var(--tinta);border-radius:50%}
+  .nube::before{width:14px;height:14px;left:calc(var(--cola,40px) - 7px);top:-20px;transition:left 1.1s}
+  .nube::after{width:8px;height:8px;left:calc(var(--cola,40px) - 10px);top:-32px;transition:left 1.1s}
+  .contador{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.7;margin-bottom:6px}
+
+  /* preguntas */
+  .pregunta{font-family:var(--titulo);font-size:clamp(24px,5vw,31px);font-weight:600;line-height:1.2;margin-bottom:22px}
+  .opciones{display:grid;gap:12px}
+  .op{font:inherit;text-align:left;cursor:pointer;background:rgba(255,255,255,.72);border:1.6px solid var(--tinta);border-radius:16px;padding:16px 18px;min-height:56px;color:var(--tinta);transition:transform .15s,box-shadow .15s,background .2s}
+  .op:hover,.op:focus-visible{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--tinta);background:#fff;outline:none}
+  .op.elegida{background:var(--noche);color:var(--crema);border-color:var(--noche)}
+  .nav{display:flex;justify-content:space-between;margin-top:22px}
+  .lnk{font:inherit;background:none;border:none;cursor:pointer;color:var(--tinta);text-decoration:underline;text-underline-offset:4px;font-size:15px;padding:8px 0}
+  .btn{display:inline-block;font:inherit;font-weight:700;cursor:pointer;background:var(--ladrillo);color:var(--crema);border:none;border-radius:999px;padding:16px 30px;min-height:52px;font-size:17px;text-decoration:none;box-shadow:3px 3px 0 var(--tinta);transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--tinta)}
+  .btn.sec{background:transparent;color:var(--tinta);border:1.6px solid var(--tinta);box-shadow:none}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 26px;font-size:14px}
+  .chip{border:1.4px solid var(--tinta);border-radius:999px;padding:5px 12px;background:rgba(255,255,255,.5)}
+
+  /* postal */
+  .postal{background:var(--crema);border-radius:6px;box-shadow:0 18px 40px rgba(0,0,0,.25);padding:26px 22px 24px;position:relative;margin-top:8px;transform:rotate(-.6deg)}
+  .postal::after{content:"";position:absolute;inset:10px;border:1.4px dashed rgba(30,30,30,.35);border-radius:3px;pointer-events:none}
+  .postal-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:10px}
+  .desde{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+  .sello{flex:none;width:96px;height:116px;background:var(--cat);color:var(--sello-txt,var(--tinta));padding:12px 10px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;line-height:1.25;outline:1.6px dashed currentColor;outline-offset:-7px;box-shadow:0 0 0 5px #fff,0 0 0 6px rgba(30,30,30,.35),3px 5px 10px 5px rgba(0,0,0,.12);transform:rotate(4deg);margin:6px 6px 0 0}
+  .sello .casa{font-size:26px;margin-bottom:6px}
+  .postal h2{font-size:clamp(28px,6vw,40px);margin:6px 0 16px}
+  .postal .diag p{font-size:16.5px}
+  .seccion{font-family:var(--titulo);font-size:22px;font-weight:600;margin:26px 0 14px}
+  .clases{display:grid;gap:16px}
+  .clase{display:grid;grid-template-columns:1fr;gap:10px;text-decoration:none;color:inherit;background:#fff;border:1.4px solid var(--tinta);border-radius:14px;overflow:hidden;transition:transform .15s,box-shadow .15s}
+  .clase:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--tinta)}
+  .clase img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+  .clase .info{padding:0 16px 16px}
+  .paso{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--ladrillo)}
+  .clase h4{font-family:var(--titulo);font-size:19px;font-weight:600;margin:4px 0 4px;line-height:1.25}
+  .clase p{font-size:15px;margin:0}
+  .ver{font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px;margin-top:6px;display:inline-block}
+  .extras{list-style:none;display:grid;gap:10px}
+  .extras a{color:inherit;font-weight:700}
+  .extras li{font-size:15px;padding-left:18px;position:relative}
+  .extras li::before{content:"✦";position:absolute;left:0;top:0;font-size:12px}
+  .recuerda{margin-top:26px;padding:18px 20px;background:var(--beige);border-left:4px solid var(--ladrillo);border-radius:4px;font-family:var(--titulo);font-style:italic;font-size:19px;line-height:1.4}
+  .recuerda b{font-style:normal;font-family:var(--texto);font-size:12px;letter-spacing:.18em;text-transform:uppercase;display:block;margin-bottom:6px}
+  .cierre{margin-top:18px;font-size:15px}
+  .acciones{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  @media (min-width:640px){
+    .postal{padding:40px 40px 34px}
+    .clase{grid-template-columns:220px 1fr;align-items:center}
+    .clase .info{padding:14px 16px 14px 0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><span class="marca">El Refugio 🏠</span><span id="etapa">El camino creativo</span></header>
+
+  <div class="camino" aria-hidden="true">
+    <svg id="mapa" viewBox="0 0 360 130">
+      <path id="ruta" class="ruta-base" d="M14,104 C48,30 86,124 120,78 S150,18 186,44 S172,112 214,104 S262,30 292,58 S318,108 346,40"/>
+      <path id="hecha" class="ruta-hecha" d=""/>
+      <g id="paradas"></g>
+      <text class="meta" x="338" y="26">🏠</text>
+    </svg>
+    <div class="guia" id="guia" title="Tu guía en el camino">
+      <!-- GUÍA PROVISIONAL: se reemplaza por el personaje de Ani (img/guia.png) -->
+      <svg class="cuerpo" viewBox="0 0 54 54" width="54" height="54">
+        <ellipse cx="27" cy="50" rx="13" ry="2.5" fill="rgba(0,0,0,.18)"/>
+        <path d="M13 26 L27 13 L41 26 V47 H13 Z" fill="#F2ECDF" stroke="#1E1E1E" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M9 28 L27 10 L45 28" fill="none" stroke="#952A24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="23" y="34" width="8" height="13" rx="1.5" fill="#952A24"/>
+        <circle cx="21" cy="27" r="1.8" fill="#1E1E1E"/><circle cx="33" cy="27" r="1.8" fill="#1E1E1E"/>
+        <path d="M23.5 30.5 Q27 33 30.5 30.5" fill="none" stroke="#1E1E1E" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="nube" id="nube"></div>
+
+  <!-- BIENVENIDA -->
+  <section class="pantalla activa" id="p-inicio">
+    <div class="contador">El Test del Camino Creativo</div>
+    <h1>Bienvenido al camino creativo</h1>
+    <p>El camino creativo empieza el día que decides que la creatividad es una parte fundamental de tu vida y que quieres construir tu vida alrededor de ella.</p>
+    <p>Desde ese momento recorres un camino con muchas etapas: momentos en los que no sabes por dónde empezar, otros en los que el miedo te frena, otros en los que ya creas y quieres vivir de lo que haces. No es un camino recto: avanzas, te detienes y a veces vuelves a pasar por lugares que creías superados.</p>
+    <p>Este test te ayuda a descubrir en qué punto del camino estás hoy y qué clases y herramientas de El Refugio pueden acompañarte en lo que estás viviendo.</p>
+    <div class="chips"><span class="chip">7 preguntas</span><span class="chip">menos de 2 minutos</span><span class="chip">una postal al final</span></div>
+    <button class="btn" id="empezar">Empezar el camino</button>
+  </section>
+
+  <!-- PREGUNTA -->
+  <section class="pantalla" id="p-pregunta">
+    <div class="contador" id="contador"></div>
+    <div class="pregunta" id="enunciado"></div>
+    <div class="opciones" id="opciones"></div>
+    <div class="nav"><button class="lnk" id="atras">← Volver</button></div>
+  </section>
+
+  <!-- RESULTADO -->
+  <section class="pantalla" id="p-resultado">
+    <article class="postal" id="postal"></article>
+    <div class="acciones">
+      <button class="btn sec" id="repetir">Volver a hacer el test</button>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ===== CONFIGURACIÓN ===== */
+// URL de la aplicación web de Google Apps Script que guarda las respuestas en el Sheet.
+// Si está vacía, el test funciona igual pero no guarda nada.
+const REGISTRO_URL = "";
+const PATREON = "https://www.patreon.com/elrefugiocreativo/posts/";
+
+/* ===== PREGUNTAS ===== */
+// Cada opción suma 1 (la pregunta 7 suma 2.1) a uno o dos momentos.
+const PREGUNTAS = [
+  {t:"¿En qué punto está tu proyecto?", o:[
+    ["Tengo ganas, pero no sé por dónde empezar",["empezar"]],
+    ["Tengo una idea y quiero aterrizarla",["empezar","organizacion"]],
+    ["Ya estoy creando, pero me cuesta sostenerlo",["constancia"]],
+    ["Ya lo muestro y quiero vivir de él",["profesionalizar","vender"]]]},
+  {t:"Cuando te sientas a crear, ¿qué pasa?", o:[
+    ["No me sale nada, me quedo en blanco",["bloqueo"]],
+    ["Lo empiezo y lo rehago mil veces",["perfeccionismo"]],
+    ["Me distraigo o lo dejo para después",["constancia"]],
+    ["Fluye; el problema viene después",[]]]},
+  {t:"¿Qué te frena más?", o:[
+    ["Sentir que no soy tan bueno como creen",["miedo"]],
+    ["Mostrarme en redes",["mostrarme"]],
+    ["Ponerle precio a lo que hago",["vender"]],
+    ["No saber si lo que hago tiene sentido",["identidad"]]]},
+  {t:"¿Cómo está tu organización?", o:[
+    ["Un caos total",["organizacion"]],
+    ["Tengo sistema, pero no lo sigo",["constancia"]],
+    ["Bien, no es mi problema",[]]]},
+  {t:"¿Cómo te sientes últimamente?", o:[
+    ["Agotado o en crisis",["crisis"]],
+    ["Desconectado del porqué hago esto",["identidad"]],
+    ["Solo, sin gente que me entienda",["comunidad"]],
+    ["Con energía",[]]]},
+  {t:"Si tu proyecto fuera un negocio…", o:[
+    ["Todavía no pienso en eso",[]],
+    ["Quiero vender, pero no sé qué ofrecer",["vender"]],
+    ["Ya vendo, pero de forma improvisada",["profesionalizar"]],
+    ["Quiero proteger y formalizar lo que hago",["profesionalizar"]]]},
+  {t:"Si pudieras resolver una sola cosa este mes, ¿cuál sería?", peso:2.1, o:[
+    ["Volver a crear con ganas",["bloqueo"]],
+    ["Terminar lo que empiezo",["constancia","perfeccionismo"]],
+    ["Mostrar mi trabajo sin miedo",["mostrarme","miedo"]],
+    ["Arrancar mi proyecto",["empezar"]],
+    ["Ganar dinero con lo que creo",["vender"]],
+    ["Sentirme bien conmigo",["crisis"]]]}
+];
+
+/* ===== LO QUE DICE LA GUÍA ===== */
+const NUBES = [
+  "Estoy aquí para acompañarte y recordarte que siempre puedes tener el valor de intentarlo.",
+  "Empecemos por tu proyecto. Responde con lo que vives hoy.",
+  "No hay respuestas buenas ni malas. Solo puntos del camino.",
+  "Nombrar lo que te frena ya es un paso de valentía.",
+  "Vas muy bien. Sigue caminando conmigo.",
+  "Ya vas por la mitad del camino.",
+  "Casi llegamos. Esta es la penúltima.",
+  "Último paso. Elige lo que más te importa hoy.",
+  "¡Llegaste! Te preparé una postal de este punto del camino."
+];
+
+/* ===== COLORES ===== */
+const FONDOS = ["#F2ECDF","#F4EBC6","#DDE3E8","#E6DFE7","#DADEE8","#EBD9D6","#EFE6D3","#E9EDE3"];
+const CAT = { // color del sello y del fondo de la postal por momento
+  bloqueo:"#EDD87C", miedo:"#ACBAC4", perfeccionismo:"#ACBAC4", crisis:"#ACBAC4",
+  empezar:"#4E5B81", organizacion:"#4E5B81", constancia:"#4E5B81",
+  mostrarme:"#8E242A", identidad:"#8E242A", comunidad:"#8E242A",
+  vender:"#98869C", profesionalizar:"#98869C"
+};
+const CAT_TXT = {empezar:"#F2ECDF",organizacion:"#F2ECDF",constancia:"#F2ECDF",mostrarme:"#F2ECDF",identidad:"#F2ECDF",comunidad:"#F2ECDF"};
+
+/* ===== NOTAS "RECUERDA QUE…" ===== */
+const RECUERDA = {
+  bloqueo:"Crear también es jugar. No tienes que justificar todo lo que haces.",
+  miedo:"La valentía no es ausencia de miedo: es la evidencia acumulada de que eres capaz de actuar con él encima.",
+  perfeccionismo:"Deja de perfeccionarlo en tu cabeza. Ponlo en el mundo. Eso es data real.",
+  empezar:"No tienes que estar listo para empezar. Pero sí tienes que empezar.",
+  organizacion:"La sensibilidad sin estructura se queda en sueños. Aquí los sueños encuentran pasos.",
+  constancia:"Cada vez que vuelves a lo que empezaste, subes un escalón. Y los escalones se acumulan.",
+  mostrarme:"Ya no tienes que tener miedo de que te vean intentándolo.",
+  vender:"Tú eres tu activo más valioso. Lo que tienes para dar importa.",
+  crisis:"Tu sensibilidad no es un defecto. Es la herramienta más precisa que tienes.",
+  identidad:"El caso que tienes que resolver eres tú. Todas las respuestas están adentro.",
+  comunidad:"Ya no tienes que caminar solo el camino creativo. Vamos ekipo 🏠",
+  profesionalizar:"Ir de la idea a la realidad no es llegar una vez: es aprender a moverse así para siempre."
+};
+
+/* ===== RESULTADOS ===== */
+const RESULTADOS = {"bloqueo": {"nombre": "Bloqueo creativo", "titulo": "volver a crear con emoción", "diag": ["Te sientas a crear y no sale nada. Por supuesto, no es que se te haya acabado la creatividad: es que quizás le has estado exigiendo demasiado. ¿Recuerdas cuándo has sido más creativo en toda tu vida? ¿Cuando imaginabas mil mundos diferentes en tus juegos? Fue cuando eras niño.", "Cuando la creatividad se vuelve nuestra forma de vida, empezamos a olvidar que ese es el centro de todo: jugar. Para desbloquearte, a veces solo necesitas recordarlo. Estas clases y ejercicios te ayudarán a volver a disfrutar de usar tu creatividad."], "clases": [{"paso": "Empieza aquí", "titulo": "Seamos niños otra vez (con Mucho Amor Club)", "desc": "Una manualidad para callar la mente y volver al presente.", "link": "reto-creativo-el-152075499", "img": "seamos"}, {"paso": "Profundiza", "titulo": "Caras por doquier", "desc": "Un reto para ver lo creativo en lo cotidiano.", "link": "reto-creativo-155539379", "img": "caras"}, {"paso": "Practica", "titulo": "La peor idea posible", "desc": "Juegos para entrenar tu creatividad sin juzgar lo que sale.", "link": "reto-creativo-172269598", "img": "usos"}], "extras": [{"titulo": "Mindfulness para crear (con Assar Lilue)", "desc": "Cómo entrar en flow desde la calma y no desde la prisa.", "link": "como-volver-la-144309937"}, {"titulo": "Crear para sanar", "desc": "El proyecto de las camitas y el arte como pausa.", "link": "reto-creativo-y-163797820"}]}, "miedo": {"nombre": "Miedo e impostor", "titulo": "creer en lo que haces", "diag": ["Tienes la sensación de que en cualquier momento alguien va a descubrir que no eres tan bueno en lo que haces. Cuando algo te sale bien, piensas que fue suerte; cuando te felicitan, sientes que los engañaste. Comparas tu proceso, con todas sus dudas, con el resultado final de otros. Y mientras más aprendes, más notas lo que te falta, así que nunca terminas de sentirte listo.", "¿Te has preguntado por qué ese miedo aparece justo cuando estás a punto de hacer algo que te hará crecer, como publicar un post o vender tu servicio? Es porque te estás atreviendo a salir de tu zona de confort. No se trata de dejar de sentir miedo, sino de que deje de detenerte. Estas clases te ayudarán a reconocer lo que te hace único, a mirar el miedo con curiosidad y a mostrar tu talento aunque la duda siga ahí."], "clases": [{"paso": "Empieza aquí", "titulo": "Tu configuración única", "desc": "La herramienta contra el síndrome del impostor.", "link": "vence-el-del-de-158586731", "img": "impostor"}, {"paso": "Profundiza", "titulo": "Del miedo a la curiosidad (Mindfulness con Assar Lilue)", "desc": "Cómo mirar el miedo con curiosidad en vez de huirle.", "link": "del-miedo-la-con-168193062", "img": "curiosidad"}, {"paso": "Practica", "titulo": "No es presumir (con Ana Valecillos)", "desc": "Cómo perderle el miedo a mostrar (y cobrar) tu talento.", "link": "pierde-el-miedo-149771029", "img": "ana"}], "extras": [{"titulo": "Vitrina y taller (Mindfulness con Assar Lilue)", "desc": "Cómo crear sin miedo a la crítica.", "link": "soltar-el-miedo-170856749"}, {"titulo": "Tu marca personal empieza por conocerte (con Astrid León)", "desc": "", "link": "duplica-tus-con-172807550"}]}, "perfeccionismo": {"nombre": "Perfeccionismo", "titulo": "soltar el \"todavía no está listo\"", "diag": ["Empiezas, rehaces, vuelves a empezar… y nada te parece suficiente para mostrarlo. ¿Cuántas ideas tienes guardadas esperando a estar perfectas? El perfeccionismo se disfraza de exigencia, pero muchas veces es miedo a ser visto.", "Lo que creas no tiene que ser perfecto para tener valor; tiene que existir. Estas clases te ayudarán a bajarle el volumen a la autocrítica para finalmente sacar tus ideas al mundo."], "clases": [{"paso": "Empieza aquí", "titulo": "Seamos niños otra vez (con Mucho Amor Club)", "desc": "Una manualidad para callar la mente y volver al presente.", "link": "reto-creativo-el-152075499", "img": "seamos"}, {"paso": "Profundiza", "titulo": "Un gesto contra la autocrítica (Mindfulness con Assar Lilue)", "desc": "Autocompasión para creativos.", "link": "entrena-la-con-174131183", "img": "autocompasion"}, {"paso": "Practica", "titulo": "Crea tu Producto Mínimo Viable (con Fabiana Gómez)", "desc": "Lanza una primera versión en vez de esperar la perfecta.", "link": "crea-tu-producto-146263636", "img": "pmv"}], "extras": [{"titulo": "Mindfulness para crear (con Assar Lilue)", "desc": "Cómo entrar en flow desde la calma y no desde la prisa.", "link": "como-volver-la-144309937"}, {"titulo": "Vitrina y taller (Mindfulness con Assar Lilue)", "desc": "Cómo crear sin miedo a la crítica.", "link": "soltar-el-miedo-170856749"}]}, "empezar": {"nombre": "Empezar un proyecto", "titulo": "aterrizar la idea", "diag": ["Llevas tiempo con una idea dando vueltas y, cada vez que piensas en empezar, simplemente no sabes cómo, ni dónde, ni cuándo, ni cuál es el primer paso.", "Estas clases te ayudarán a aterrizar tus ideas: elegir en cuál enfocarte, convertirla en un plan con pasos concretos y lanzar una versión viable al mundo para ver cómo responde la gente, sin esperar a tenerlo todo resuelto."], "clases": [{"paso": "Empieza aquí", "titulo": "De idea a proyecto", "desc": "El sistema para captar, filtrar y planificar tus ideas.", "link": "convierte-una-en-142742109", "img": "idea"}, {"paso": "Profundiza", "titulo": "Crea tu Producto Mínimo Viable (con Fabiana Gómez)", "desc": "Lanza una primera versión y vence el perfeccionismo.", "link": "crea-tu-producto-146263636", "img": "pmv"}, {"paso": "Practica", "titulo": "Empezar con poco (con David Barreto)", "desc": "Cómo validar tu idea y sobrevivir las crisis.", "link": "el-viaje-del-con-173403327", "img": "david"}], "extras": [{"titulo": "Por qué nadie compra tus ideas (con Nina Chirinos)", "desc": "Diseña tu oferta desde el problema que resuelves.", "link": "convierte-tus-en-141213862"}, {"titulo": "De la idea al libro publicado (con Fabiana Gómez)", "desc": "Estructura, edición y venta.", "link": "el-viaje-de-un-170858613"}]}, "organizacion": {"nombre": "Organización y planificación", "titulo": "ordenar el caos", "diag": ["Tienes mil ideas, pendientes por todos lados y la sensación de que el tiempo nunca alcanza. ¿Cuántas veces has sentido que trabajas todo el día y no avanzas en lo que de verdad importa? Te hace falta construir sistemas que sostengan tu trabajo creativo.", "El orden y la planificación no le quitan libertad a tu creatividad: le dan espacio para existir. Estas clases te ayudarán a crear más estructura."], "clases": [{"paso": "Empieza aquí", "titulo": "Notion 101", "desc": "Textos, páginas y bases de datos para ordenar tu vida creativa.", "link": "notion-101-crea-145909357", "img": "notion"}, {"paso": "Profundiza", "titulo": "De idea a proyecto", "desc": "El sistema para captar, filtrar y planificar tus ideas.", "link": "convierte-una-en-142742109", "img": "idea"}, {"paso": "Practica", "titulo": "Gestión del tiempo para creativos", "desc": "Cómo desconectarte cuando trabajas desde casa.", "link": "gestion-del-151478241", "img": "gestion"}], "extras": [{"titulo": "Sistemas y diálogo interno", "desc": "Cómo sostener una idea cuando la cabeza te frena.", "link": "sistemas-y-142253819"}]}, "constancia": {"nombre": "Constancia y disciplina", "titulo": "sostener lo que empiezas", "diag": ["Empiezas un proyecto con muchas ganas, avanzas dos o tres semanas y un día lo dejas para mañana. Después pasa un mes. ¿Cuántos proyectos tienes a medias?", "Tienes talento y quieres hacerlo, pero necesitas entender que tus proyectos tienen que seguir aun cuando la motivación baje. Eso es lo único que te va a permitir sostenerlos hasta el final.", "Estas clases te ayudarán a entender qué te frena, a organizar tu tiempo y a armar rutinas que puedas sostener en la vida real."], "clases": [{"paso": "Empieza aquí", "titulo": "Sistemas y diálogo interno", "desc": "Cómo sostener una idea cuando la cabeza te frena.", "link": "sistemas-y-142253819", "img": "sistemas"}, {"paso": "Profundiza", "titulo": "Presión al crear", "desc": "Cómo sostener el proceso sin ahogarte en las expectativas.", "link": "presion-al-crear-143141792", "img": "presion"}, {"paso": "Practica", "titulo": "Gestión del tiempo para creativos", "desc": "Cómo desconectarte cuando trabajas desde casa.", "link": "gestion-del-151478241", "img": "gestion"}], "extras": [{"titulo": "Notion 101", "desc": "Textos, páginas y bases de datos para ordenar tu vida creativa.", "link": "notion-101-crea-145909357"}, {"titulo": "Mindfulness para crear (con Assar Lilue)", "desc": "Cómo entrar en flow desde la calma y no desde la prisa.", "link": "como-volver-la-144309937"}]}, "mostrarme": {"nombre": "Mostrarme y marca personal", "titulo": "mostrarte al mundo", "diag": ["Tienes trabajo que te gusta, pero casi nadie lo ha visto. Escribes un post, lo lees diez veces y terminas sin publicarlo. ¿Qué pasaría si la gente supiera lo que haces y por qué lo haces?", "Estas clases te ayudarán a contar tu historia de origen, a construir una identidad visual coherente y a compartir tu trabajo para que otras personas lo conozcan y se abran nuevas oportunidades.", "Si nadie sabe lo que haces, ¿cómo van a contratarte, recomendarte o comprarte?"], "clases": [{"paso": "Empieza aquí", "titulo": "Tu historia de origen", "desc": "Escribe lo que te trajo hasta aquí. Es la base de todo lo que vas a mostrar.", "link": "descubre-tu-de-159836297", "img": "origen"}, {"paso": "Profundiza", "titulo": "Haz que se note que eres tú (con Ale Quiroz)", "desc": "Cómo convertir esa historia en una identidad visual que la gente reconozca.", "link": "construye-una-te-154337530", "img": "ale"}, {"paso": "Practica", "titulo": "Vitrina y taller (Mindfulness con Assar Lilue)", "desc": "Cómo crear y mostrar tu trabajo sin miedo a la crítica.", "link": "soltar-el-miedo-170856749", "img": "vitrina"}], "extras": [{"titulo": "Lluvia de ideas en vivo: marca personal para artistas", "desc": "Mira cómo se trabaja la marca de otros creativos en tiempo real.", "link": "feedback-en-vivo-153780021"}, {"titulo": "Editar con intención (con Greativa)", "desc": "El criterio detrás de un video que funciona.", "link": "edicion-y-para-167559300"}]}, "vender": {"nombre": "Vender y cobrar", "titulo": "ganar dinero con lo que creas", "diag": ["Quieres vivir de lo que haces, pero ¿sabes con claridad qué ofreces y a quién le sirve? Sin esa respuesta, vender es muy complicado.", "Estas clases te ayudarán a reconocer tus habilidades, a diseñar una oferta a partir del problema que resuelves y a construir una relación más sana con el dinero."], "clases": [{"paso": "Empieza aquí", "titulo": "Audita tus habilidades (con Nina Chirinos)", "desc": "Descubre qué puedes vender y por qué te elegirían a ti.", "link": "audita-tus-para-164369281", "img": "audita"}, {"paso": "Profundiza", "titulo": "Por qué nadie compra tus ideas (con Nina Chirinos)", "desc": "Diseña tu oferta desde el problema que resuelves.", "link": "convierte-tus-en-141213862", "img": "convierte"}, {"paso": "Practica", "titulo": "Audiencia no es comunidad (con Claudia Núñez)", "desc": "Cómo construir una comunidad que se sostenga y cambiar tu relación con el dinero.", "link": "crea-una-real-y-169569729", "img": "claudia"}], "extras": [{"titulo": "De artista a ejecutivo (con Zandú)", "desc": "Cómo profesionalizar tu proyecto creativo.", "link": "convierte-tu-en-159204542"}, {"titulo": "No es presumir (con Ana Valecillos)", "desc": "Cómo perderle el miedo a mostrar (y cobrar) tu talento.", "link": "pierde-el-miedo-149771029"}]}, "crisis": {"nombre": "Crisis y emociones", "titulo": "volver a ti", "diag": ["Estás pasando por un momento difícil y crear se siente pesado, o directamente imposible. ¿Cuándo fue la última vez que hiciste algo solo por el gusto de hacerlo? En momentos así, exigirte producir solo suma presión.", "Estas clases te ayudarán a gestionar lo que estás sintiendo, a seguir creando en medio de la incertidumbre y a usar el arte como pausa, no como una tarea más."], "clases": [{"paso": "Empieza aquí", "titulo": "Cuando todo se mueve (con la psicóloga Yenni Domínguez)", "desc": "Herramientas para gestionar tus emociones en crisis.", "link": "gestion-en-de-163051200", "img": "yenni"}, {"paso": "Profundiza", "titulo": "Florecer en lo incierto (con Pao Pao Rosales)", "desc": "Cómo seguir creando cuando la vida cambia.", "link": "como-sobrellevar-170163414", "img": "pao"}, {"paso": "Practica", "titulo": "Crear para sanar", "desc": "El proyecto de las camitas y el arte como pausa.", "link": "reto-creativo-y-163797820", "img": "camitas"}], "extras": [{"titulo": "Un gesto contra la autocrítica (Mindfulness con Assar Lilue)", "desc": "Autocompasión para creativos.", "link": "entrena-la-con-174131183"}, {"titulo": "Mindfulness para crear (con Assar Lilue)", "desc": "Cómo entrar en flow desde la calma y no desde la prisa.", "link": "como-volver-la-144309937"}]}, "identidad": {"nombre": "Identidad y propósito", "titulo": "reconectar con tu porqué", "diag": ["Haces cosas, publicas, cumples, pero hay días en que no sabes para qué ni hacia dónde vas. ¿Recuerdas qué te hizo empezar? Cuando pierdes ese hilo, es más fácil compararte con otros y dudar de cada decisión.", "Estas clases te ayudarán a escuchar tu intuición, a entender qué te mueve y a que tu proyecto refleje quién eres."], "clases": [{"paso": "Empieza aquí", "titulo": "Escucha tu intuición (con Ash)", "desc": "Cómo usarla para crear y decidir.", "link": "intuicion-y-con-161761129", "img": "ash"}, {"paso": "Profundiza", "titulo": "El mito de tu marca (con Type of Amigo)", "desc": "Branding como un recorrido personal.", "link": "coherencia-y-tu-156675998", "img": "type"}, {"paso": "Practica", "titulo": "Tu marca personal empieza por conocerte (con Astrid León)", "desc": "", "link": "duplica-tus-con-172807550", "img": "astrid"}], "extras": [{"titulo": "Crea tu vision board con collage (con Sofía Camila)", "desc": "Visualiza tu año desde el proceso y no solo desde el resultado.", "link": "crea-tu-vision-y-144920800"}, {"titulo": "Tu historia de origen", "desc": "Escribe lo que te trajo hasta aquí.", "link": "descubre-tu-de-159836297"}]}, "comunidad": {"nombre": "Comunidad y conexiones", "titulo": "dejar de crear solo", "diag": ["Trabajas por tu cuenta y no tienes con quién hablar de tus ideas, pedir una opinión o compartir un logro. ¿Cuántas de tus mejores oportunidades llegaron gracias a otra persona? Las conexiones y los vínculos que potencian tu trabajo no aparecen solos; tú tienes que construirlos intencionalmente.", "Estas clases te ayudarán a conectar con otros creativos de forma genuina, a construir una comunidad alrededor de lo que haces y a mostrar tu proceso para que otros se sumen."], "clases": [{"paso": "Empieza aquí", "titulo": "Networking para creativos (con Michelle Gabriela)", "desc": "Haz amigos, no contactos.", "link": "practicas-de-con-137946526", "img": "michelle"}, {"paso": "Profundiza", "titulo": "Audiencia no es comunidad (con Claudia Núñez)", "desc": "Cómo construir una que se sostenga.", "link": "crea-una-real-y-169569729", "img": "claudia"}, {"paso": "Practica", "titulo": "Vende el proceso, no solo el producto", "desc": "Feedback en vivo para unificar tu identidad digital.", "link": "feedback-en-vivo-166963811", "img": "unifica"}], "extras": [{"titulo": "Lluvia de ideas en vivo: marca personal para artistas", "desc": "Mira cómo se trabaja la marca de otros creativos en tiempo real.", "link": "feedback-en-vivo-153780021"}, {"titulo": "Crear para sanar", "desc": "El proyecto de las camitas: crear en colectivo.", "link": "reto-creativo-y-163797820"}]}, "profesionalizar": {"nombre": "Profesionalizar mi proyecto", "titulo": "tratar tu proyecto como un negocio", "diag": ["Ya vendes o estás cerca, pero todo se maneja sobre la marcha: sin procesos, sin sistemas, sin contratos, sin saber bien qué te deja cada venta. ¿Cuánto más podría crecer tu proyecto si lo manejaras con la misma seriedad con la que lo creas?", "Estas clases te ayudarán a pensar como dueño de tu proyecto, a proteger tu propiedad intelectual y a llevar una idea de principio a fin hasta el mercado."], "clases": [{"paso": "Empieza aquí", "titulo": "De artista a ejecutivo (con Zandú)", "desc": "Cómo profesionalizar tu proyecto creativo.", "link": "convierte-tu-en-159204542", "img": "zandu"}, {"paso": "Profundiza", "titulo": "Protege lo que creas (con el Abg. Asdrúbal Gómez)", "desc": "Propiedad intelectual y derechos de autor para creativos.", "link": "derecho-de-autor-164980226", "img": "derecho"}, {"paso": "Practica", "titulo": "De la idea al libro publicado (con Fabiana Gómez)", "desc": "Estructura, edición y venta de un proyecto de principio a fin.", "link": "el-viaje-de-un-170858613", "img": "libro"}], "extras": [{"titulo": "Empezar con poco (con David Barreto)", "desc": "Cómo validar tu idea y sobrevivir las crisis.", "link": "el-viaje-del-con-173403327"}, {"titulo": "Notion 101", "desc": "Ordena tu proyecto en un solo lugar.", "link": "notion-101-crea-145909357"}]}};
+
+/* ===== LÓGICA ===== */
+const $ = s => document.querySelector(s);
+const ruta = $('#ruta'), hecha = $('#hecha'), guia = $('#guia'), mapa = $('#mapa');
+const N = PREGUNTAS.length;            // 7 preguntas -> 9 puntos (inicio, 7, llegada)
+const L = ruta.getTotalLength();
+let paso = 0, respuestas = [];
+
+const puntos = Array.from({length:N+2},(_,i)=>ruta.getPointAtLength(L*i/(N+1)));
+$('#paradas').innerHTML = puntos.slice(0,-1).map((p,i)=>`<circle class="parada" data-i="${i}" cx="${p.x}" cy="${p.y}" r="4.2"/>`).join('');
+hecha.setAttribute('d', ruta.getAttribute('d'));
+hecha.style.strokeDasharray = `0 ${L+10}`;
+
+function moverGuia(i){
+  const p = puntos[i], box = mapa.getBoundingClientRect(), vb = mapa.viewBox.baseVal;
+  const k = box.width / vb.width;
+  guia.classList.remove('quieto');
+  guia.style.left = (p.x*k)+'px'; guia.style.top = (p.y*k)+'px';
+  const nube=$('#nube'); nube.style.setProperty('--cola', Math.min(Math.max(p.x*k,24), nube.offsetWidth-24)+'px');
+  clearTimeout(moverGuia.t); moverGuia.t = setTimeout(()=>guia.classList.add('quieto'),1150);
+  document.querySelectorAll('.parada').forEach(c=>c.classList.toggle('ok', +c.dataset.i < i));
+  // tramo recorrido: línea continua hasta donde va la guía
+  const len = L*i/(N+1);
+  hecha.style.strokeDasharray = `${len} ${L+10}`;
+}
+
+function mostrar(id){
+  document.querySelectorAll('.pantalla').forEach(s=>s.classList.toggle('activa', s.id===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function decir(t){ $('#nube').textContent = t; }
+
+function pregunta(i){
+  paso = i;
+  document.body.style.background = FONDOS[i+1] || FONDOS[0];
+  $('#etapa').textContent = `Paso ${i+1} de ${N}`;
+  $('#contador').textContent = `Pregunta ${i+1} de ${N}`;
+  $('#enunciado').textContent = PREGUNTAS[i].t;
+  $('#opciones').innerHTML = PREGUNTAS[i].o.map((o,j)=>
+    `<button class="op${respuestas[i]===j?' elegida':''}" data-j="${j}">${o[0]}</button>`).join('');
+  decir(NUBES[i+1]);
+  moverGuia(i+1);
+  mostrar('p-pregunta');
+}
+
+$('#opciones').addEventListener('click', e=>{
+  const b = e.target.closest('.op'); if(!b) return;
+  respuestas[paso] = +b.dataset.j;
+  b.classList.add('elegida');
+  setTimeout(()=> paso < N-1 ? pregunta(paso+1) : resultado(), 260);
+});
+$('#atras').addEventListener('click', ()=> paso>0 ? pregunta(paso-1) : inicio());
+$('#empezar').addEventListener('click', ()=>{ respuestas=[]; pregunta(0); });
+$('#repetir').addEventListener('click', ()=>{ respuestas=[]; inicio(); });
+
+function inicio(){
+  document.body.style.background = FONDOS[0];
+  $('#etapa').textContent = 'El camino creativo';
+  decir(NUBES[0]); moverGuia(0); mostrar('p-inicio');
+}
+
+function calcular(){
+  const pts = {}; Object.keys(RESULTADOS).forEach(k=>pts[k]=0);
+  respuestas.forEach((j,i)=>{ const peso = PREGUNTAS[i].peso||1; PREGUNTAS[i].o[j][1].forEach(m=>pts[m]+=peso); });
+  // gana el más alto; los empates los decide la pregunta 7 (peso 2.1)
+  let mejor = null; for(const k in pts){ if(mejor===null || pts[k]>pts[mejor]) mejor=k; }
+  return {momento:mejor, pts};
+}
+
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+
+function resultado(){
+  const {momento, pts} = calcular();
+  const r = RESULTADOS[momento];
+  document.body.style.background = CAT[momento];
+  $('#etapa').textContent = 'Llegaste';
+  decir(NUBES[N+1]); moverGuia(N+1);
+  const postal = $('#postal');
+  postal.style.setProperty('--cat', CAT[momento]);
+  postal.style.setProperty('--sello-txt', CAT_TXT[momento] || '#1E1E1E');
+  postal.innerHTML = `
+    <div class="postal-cab">
+      <div><div class="desde">Postal desde el camino creativo</div>
+        <h2>Estás aquí: ${esc(cap(r.titulo))}</h2></div>
+      <div class="sello"><span class="casa">🏠</span>${esc(r.nombre)}</div>
+    </div>
+    <div class="diag">${r.diag.map(p=>`<p>${esc(p)}</p>`).join('')}</div>
+    <div class="seccion">Las herramientas que tenemos para ti en El Refugio</div>
+    <div class="clases">${r.clases.map(c=>`
+      <a class="clase" href="${PATREON+c.link}" target="_blank" rel="noopener">
+        <img src="img/${c.img}.jpg" alt="Miniatura de la clase ${esc(c.titulo)}" loading="lazy">
+        <div class="info"><span class="paso">${esc(c.paso)}</span><h4>${esc(c.titulo)}</h4><p>${esc(c.desc)}</p><span class="ver">Ver clase →</span></div>
+      </a>`).join('')}</div>
+    <div class="seccion">También te puede servir</div>
+    <ul class="extras">${r.extras.map(x=>`<li><a href="${PATREON+x.link}" target="_blank" rel="noopener">${esc(x.titulo)}.</a> ${esc(x.desc)}</li>`).join('')}</ul>
+    <div class="recuerda"><b>Recuerda que…</b>${esc(RECUERDA[momento])}</div>
+    <p class="cierre">☕ Ve las clases con cafecito en mano y cuéntanos en los comentarios de cada una qué te llevaste.</p>`;
+  mostrar('p-resultado');
+  registrar(momento, pts);
+}
+
+function registrar(momento, pts){
+  if(!REGISTRO_URL) return;
+  const fila = {
+    fecha: new Date().toISOString(),
+    resultado: RESULTADOS[momento].nombre,
+    respuestas: respuestas.map((j,i)=>PREGUNTAS[i].o[j][0]),
+    puntajes: pts,
+    origen: document.referrer || 'directo'
+  };
+  try{ fetch(REGISTRO_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(fila)}); }catch(e){}
+}
+
+window.addEventListener('resize', ()=>moverGuia(document.querySelector('#p-resultado.activa')?N+1:(document.querySelector('#p-pregunta.activa')?paso+1:0)));
+inicio();
+</script>
+</body>
+</html>
